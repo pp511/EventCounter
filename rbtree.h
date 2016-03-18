@@ -5,7 +5,7 @@
 typedef enum {BLACK, RED} nodeColor;
 
 class Treenode{
-public://Data to be changed to private. Improper OOP practice.
+public://There are not getter,setter functions being used for this class. Better idea to use struct instead.
 	int m_id,m_count;
 	nodeColor m_color;
 	Treenode *left,*right,*parent;
@@ -17,7 +17,7 @@ class RBTree{
 private:
 	Treenode* m_root;
 	void colorTree(Treenode* node, int level, int maxHeight);
-	Treenode* sortedVectorToBST(std::vector<Treenode> input, int start, int end);
+	Treenode* sortedVectorToBST(std::vector<Treenode*> &input, int start, int end);
 	void inOrderUtil(Treenode* root);
 	void deleteTree(Treenode* root);
 	void replaceNode(Treenode* oldNode, Treenode* newNode);
@@ -44,11 +44,10 @@ private:
     Treenode* inorderPredecessor(Treenode* node);
     void inRangeUtil(Treenode* temp,int key1, int key2);
 
-
 public:
 	RBTree();
 	~RBTree();
-	void buildTree(std::vector<Treenode> input);
+	void buildTree(std::vector<Treenode*> &input);
 	void inOrder();
 	void Increase(int key,int count);
 	void Reduce(int key, int count);
@@ -56,5 +55,4 @@ public:
 	void inRange(int key1, int key2);
 	Treenode* Next(int key);
 	Treenode* Previous(int key);
-
 };

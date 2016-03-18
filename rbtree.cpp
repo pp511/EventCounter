@@ -3,8 +3,9 @@
 #include <iostream>
 #include <math.h>
 
-
-
+/*
+ * Treenode Constructor Definition.
+ */
 Treenode::Treenode(int id,int count){
 	m_id = id;
 	m_count = count;
@@ -12,7 +13,7 @@ Treenode::Treenode(int id,int count){
 	m_color = RED; //Default color given to a node is red.
 }
 
-/* A utility function to print preorder traversal of BST */
+/* A utility function to print inorder traversal of BST */
 void RBTree::inOrderUtil(Treenode* root)
 {
     if (root == NULL)
@@ -22,21 +23,24 @@ void RBTree::inOrderUtil(Treenode* root)
     inOrderUtil(root->right);
 }
 
+/* Inorder traversal of BST */
 void RBTree::inOrder(){
 	std::cout<<"Inorder Traversal"<<std::endl;
 	inOrderUtil(m_root);
 }
 
 /* A function that constructs Balanced Binary Search Tree from a sorted array */
-Treenode* RBTree::sortedVectorToBST(std::vector<Treenode>input, int start, int end)
+Treenode* RBTree::sortedVectorToBST(std::vector<Treenode*>&input, int start, int end)
 {
     /* Base Case */
     if (start > end)
       return NULL;
 
     /* Get the middle element and make it root */
-    int mid = start + (end - start) / 2;
-    Treenode *root = new Treenode(input[mid].m_id,input[mid].m_count);
+    int mid = start + ((end - start) >> 1);
+  //std::cout<<" sortedVectorToBST .Current node index "<<mid<<std::endl;
+    Treenode *root = input[mid];
+
     root->left =  sortedVectorToBST(input, start, mid-1);
     if(root->left)
     	root->left->parent = root;
@@ -46,7 +50,11 @@ Treenode* RBTree::sortedVectorToBST(std::vector<Treenode>input, int start, int e
     return root;
 }
 
-/* A utility teh colors the balanced BST builf from the input file*/
+/* A utility that colors the balanced BST builf from the input file
+ * Tree that is built by sortedVectorToBST is a balanced BST. In order
+ * to make sure that black height is same for an imcomplete tree
+ * we color the last internal nodes as RED.
+ */
 void RBTree::colorTree(Treenode* root, int level, int maxHeight)
 {
     if (root == NULL)
@@ -59,8 +67,8 @@ void RBTree::colorTree(Treenode* root, int level, int maxHeight)
    	colorTree(root->left,level+1,maxHeight);
     colorTree(root->right,level+1,maxHeight);
 }
-//Constructor
-void RBTree::buildTree(std::vector<Treenode> nodes){
+// RBTree Constructor
+void RBTree::buildTree(std::vector<Treenode*> &nodes){
 	m_root = sortedVectorToBST(nodes,0,nodes.size()-1);// Construct the BBST from the sorted input.
 	int numNodes=nodes.size();
 	int maxHeight=(int)log2(double(numNodes));
@@ -76,7 +84,7 @@ void RBTree::buildTree(std::vector<Treenode> nodes){
 	std::cout<<"Max Height ="<<maxHeight<<" Tree Building is Finished"<<std::endl;
 
 }
-//Default Constructor
+//Default RBTree Constructor
 RBTree::RBTree(){
 	m_root = NULL;
 }
@@ -88,12 +96,15 @@ void RBTree::deleteTree(Treenode *node){
     }
     delete node;
 }
-
+/*RBTree Destructor*/
 RBTree::~RBTree(){
 	deleteTree(m_root);
 }
 
 
+/*
+ * Return grandparent of aa given node.
+ */
 
 Treenode* RBTree::grandparent(Treenode *node)
 {
@@ -103,6 +114,9 @@ Treenode* RBTree::grandparent(Treenode *node)
 	  return NULL;
 }
 
+/*
+ * Return Uncle of aa given node.
+ */
 Treenode* RBTree::uncle(Treenode *node)
 {
 	Treenode *g = grandparent(node);
@@ -174,7 +188,6 @@ void RBTree::rotateRight(Treenode* node)
  * in the other direction. Resultant  is a tree where the former parent P is now the parent of both
  *  the current node N and the former grandparent G
  */
-
 void RBTree::insert_case5(Treenode *node)
 {
 	Treenode *g = grandparent(node);
@@ -403,7 +416,7 @@ void RBTree::Increase(int key, int count)
 	            if (temp->m_id == key)
 	            {
 	            	temp->m_count += count;
-	                std::cout<<"Increased Node with ID ="<<key<<" found. Current Count="<<count<<std::endl;
+	                std::cout<<"Increased Node with ID ="<<key<<" found. Current Count="<<temp->m_count<<std::endl;
 	                delete currnode;
 	                return;
 	            }
@@ -471,7 +484,7 @@ void RBTree::Reduce(int key, int count){
 	if(temp !=NULL){
 		 temp->m_count -= count;
 		 if(temp->m_count > 0){
-			 std::cout<<"Decreased Node with ID ="<<key<<" Current Count="<<count<<std::endl;
+			 std::cout<<"Decreased Node with ID ="<<key<<" Current Count="<<temp->m_count<<std::endl;
 			 return;
 	      }
 	}
@@ -555,22 +568,30 @@ Treenode* RBTree::inorderPredecessor(Treenode* node)
 	return p;
 }
 
-
-/*void RBTree::inRange(int key1, int key2){
+/*
+ *
+ */
+/*
+void RBTree::inRange(int key1, int key2){
+	if(key2 < key1){
+		std::cout<<"Make sure to keep key2 <= key1"<<std::endl;
+		return;
+	}
 	Treenode* key1node=searchNode(key1);
 	Treenode* tempnode = key1node;
 	while(tempnode && tempnode->m_id!=key2){
 		std::cout<<"InRange Query "<<tempnode->m_id<<std::endl;
-		key2node = inorderSuccessor(key2node);
+		tempnode = inorderSuccessor(tempnode);
 	}
 	std::cout<<"InRange Query "<<tempnode->m_id<<std::endl;
 	return;
-}*/
+}
+*/
 
 void RBTree::inRangeUtil(Treenode* temp,int key1, int key2)
 {
    /* base case */
-   if (m_root == NULL)
+   if (temp == NULL)
       return;
 
    /* Since the desired o/p is sorted, recurse for left subtree first
@@ -588,9 +609,15 @@ void RBTree::inRangeUtil(Treenode* temp,int key1, int key2)
    if ( key2 > temp->m_id)
 	   inRangeUtil(temp->right, key1, key2);
 }
+
 void RBTree::inRange(int key1, int key2){
+	if(key2 < key1){
+		std::cout<<"Make sure to keep key2 <= key1"<<std::endl;
+		return;
+	}
 	inRangeUtil(m_root,key1,key2);
 }
+
 
 Treenode* RBTree::Next(int key){
 	Treenode* keynode=searchNode(key);
