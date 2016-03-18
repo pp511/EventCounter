@@ -18,7 +18,7 @@ void RBTree::inOrderUtil(Treenode* root)
     if (root == NULL)
         return;
     inOrderUtil(root->left);
-    	//std::cout<<root->m_id<<" "<<root->m_count<<" Color="<<root->m_color<<std::endl;
+    	std::cout<<root->m_id<<" "<<root->m_count<<" Color="<<root->m_color<<std::endl;
     inOrderUtil(root->right);
 }
 
@@ -407,7 +407,7 @@ void RBTree::Increase(int key, int count)
 	                delete currnode;
 	                return;
 	            }
-	            else if (temp->m_id < key)
+	            else if (temp->m_id > key)
 	            {
 	                if (temp->left == NULL)
 	                {
@@ -445,18 +445,19 @@ Treenode* RBTree::searchNode(int key)
 	 Treenode* temp = m_root;
 	    while (temp != NULL)
 	    {
+	    	std::cout<<"Search Iteration "<<temp->m_id;
 	        if (temp->m_id == key)
 	        {
-	            if(temp->m_count <= 0){
-	                break;
-	            }
+	            return temp;
 	        }
-	        else if (temp->m_id < key)
+	        else if (temp->m_id > key)
 	        {
+	        	std::cout<<" temp=temp->left"<<std::endl;
 	            temp = temp->left;
 	        }
 	        else
 	        {
+	        	std::cout<<" temp=temp->right"<<std::endl;
 	        	temp = temp->right;
 	        }
 	    }
@@ -500,9 +501,13 @@ void RBTree::Reduce(int key, int count){
 }
 
 int RBTree::Count(int key){
+	std::cout<<"FUNCTION COUNT. Key that the user is looking for is "<<key<<std::endl;
 	Treenode* temp=searchNode(key);
-	if(temp == NULL)
+	if(temp == NULL){
+		std::cout<<"temp == NULL. Incorrect ID. Count = 0"<<std::endl;
 		return 0;
+
+	}
 	std::cout<<" Count of ID "<<key<<" is"<<temp->m_count<<std::endl;
 	return temp->m_count;
 }
