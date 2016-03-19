@@ -1,7 +1,6 @@
 #include <math.h>
 #include <vector>
 
-
 typedef enum {BLACK, RED} nodeColor;
 
 class Treenode{
@@ -16,6 +15,7 @@ public://There are not getter,setter functions being used for this class. Better
 class RBTree{
 private:
 	Treenode* m_root, *m_treeNil;
+	int m_maxid, m_minid;
 	void colorTree(Treenode* node, int level, int maxHeight);
 	Treenode* sortedVectorToBST(std::vector<Treenode*> &input, int start, int end);
 	void inOrderUtil(Treenode* root);
@@ -29,12 +29,13 @@ private:
     Treenode* maximumNode(Treenode* node);
     void insertFixup(Treenode* &root, Treenode* &currnode);
     Treenode* insertNode(Treenode* root, Treenode* currnode);
-    void deleteNode(Treenode* &toDelete, Treenode* &root, int key);
+    void deleteNode(Treenode* &toDelete, Treenode* &root);
     void deleteFixup(Treenode* &root,Treenode* &currnode);
     Treenode* minimumNode(Treenode* node);
     Treenode* inorderSuccessor(Treenode* node);
     Treenode* inorderPredecessor(Treenode* node);
     void inRangeUtil(Treenode* temp,int key1, int key2,int &keySum);
+    Treenode* nextprevUtil(int key, Treenode* &prev, bool &isright);
 
 public:
 	RBTree();

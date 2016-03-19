@@ -64,11 +64,11 @@ void RBTree::colorTree(Treenode* root, int level, int maxHeight)
     	root->m_color = RED;
     else
     	root->m_color = BLACK;
-    std::cout<<root->m_id<<" "<<root->m_count<<" Color="<<root->m_color<<std::endl;
+    //std::cout<<root->m_id<<" "<<root->m_count<<" Color="<<root->m_color<<std::endl;
    	colorTree(root->left,level+1,maxHeight);
     colorTree(root->right,level+1,maxHeight);
 }
-// RBTree Constructor
+/* RBTree Constructor */
 void RBTree::buildTree(std::vector<Treenode*> &nodes){
 	m_root = sortedVectorToBST(nodes,0,nodes.size()-1);// Construct the BBST from the sorted input.
 	m_root->parent = m_treeNil;
@@ -79,34 +79,37 @@ void RBTree::buildTree(std::vector<Treenode*> &nodes){
 
 	colorTree(m_root,0,maxHeight);//  Color leaf nodes as red
 	//std::cout<<"Max Height ="<<maxHeight<<" Tree Building is Finished"<<std::endl;
+	//Initialising the min max variables of the tree
+	m_maxid =nodes[nodes.size()-1]->m_id;
+	m_minid =nodes[0]->m_id;
 
 }
-//Default RBTree Constructor
+
+/* RBTree Constructor*/
 RBTree::RBTree(){
 	m_root = NULL;
     m_treeNil = new Treenode(INT_MIN,INT_MIN);
     m_treeNil->m_color = BLACK; // NILL node is always kept as black.
     m_treeNil->parent=m_treeNil->left=m_treeNil->right=m_treeNil;
+    m_maxid = m_minid =0;
 }
 
+/* Delete teh complete tree. Except the Nil node*/
 void RBTree::deleteTree(Treenode *node){
     if(node != m_treeNil) {
     	deleteTree(node->left);
     	deleteTree(node->right);
     	delete node;
     }
-
 }
+
 /*RBTree Destructor*/
 RBTree::~RBTree(){
 	deleteTree(m_root);
 	delete m_treeNil;
 }
 
-/*
- * Return grandparent of aa given node.
- */
-
+/* Return grandparent of a given node.*/
 Treenode* RBTree::grandparent(Treenode *node)
 {
 	 if ((node != NULL) && (node->parent != NULL))
@@ -115,9 +118,7 @@ Treenode* RBTree::grandparent(Treenode *node)
 	  return NULL;
 }
 
-/*
- * Return Uncle of aa given node.
- */
+/*Return Uncle of aa given node*/
 Treenode* RBTree::uncle(Treenode *node)
 {
 	Treenode *g = grandparent(node);
@@ -129,55 +130,7 @@ Treenode* RBTree::uncle(Treenode *node)
 		return g->left;
 }
 
-/*
- * Replace a node
- */
-void RBTree::replaceNode(Treenode* oldNode, Treenode* newNode)
-{
-    if (oldNode->parent == NULL)
-    {
-        m_root = newNode;
-    }
-    else
-    {
-        if (oldNode == oldNode->parent->left)
-        	oldNode->parent->left = newNode;
-        else
-        	oldNode->parent->right = newNode;
-    }
-    if (newNode != NULL)
-    {
-    	newNode->parent = oldNode->parent;
-    }
-}
-
-/*
- * Rotate left
- */
-void RBTree::rotateLeft(Treenode* &root, Treenode* &currnode)
-{
-    Treenode* rightNode = currnode->right;
-    currnode->right = rightNode->left;
-
-    if(currnode->right != m_treeNil)
-    	currnode->right->parent = currnode;
-
-    rightNode->parent = currnode->parent;
-
-    if(currnode->parent == m_treeNil)
-        root = rightNode;
-    else if(currnode->parent->left == currnode)
-    	currnode->parent->left = rightNode;
-    else
-    	currnode->parent->right = rightNode;
-   rightNode->left = currnode;
-   currnode->parent = rightNode;
-
-}
-
-/*
- * Rotate right
- */
+/*Rotate right*/
 void RBTree::rotateRight(Treenode* &root, Treenode* &currnode)
 {
     Treenode* leftNode = currnode->left;
@@ -199,8 +152,26 @@ void RBTree::rotateRight(Treenode* &root, Treenode* &currnode)
     currnode->parent = leftNode;
 }
 
+/*Rotate left*/
+void RBTree::rotateLeft(Treenode* &root, Treenode* &currnode)
+{
+    Treenode* rightNode = currnode->right;
+    currnode->right = rightNode->left;
 
+    if(currnode->right != m_treeNil)
+    	currnode->right->parent = currnode;
 
+    rightNode->parent = currnode->parent;
+
+    if(currnode->parent == m_treeNil)
+        root = rightNode;
+    else if(currnode->parent->left == currnode)
+    	currnode->parent->left = rightNode;
+    else
+    	currnode->parent->right = rightNode;
+   rightNode->left = currnode;
+   currnode->parent = rightNode;
+}
 
 /*
  * Returns Maximum node
@@ -216,8 +187,7 @@ Treenode* RBTree::maximumNode(Treenode* node)
     return node;
 }
 
-
-
+/*Fix the violations in an RBTree after insertion of a node*/
 void RBTree::insertFixup(Treenode* &root, Treenode* &currnode)
 {
     while(currnode != root && currnode->parent->m_color == RED) {
@@ -272,7 +242,7 @@ void RBTree::insertFixup(Treenode* &root, Treenode* &currnode)
     m_root = root;
 }
 
-
+/*Insert the node in a BBST.*/
 Treenode* RBTree::insertNode(Treenode* root, Treenode* currnode)
 {
     if(root == NULL || root == m_treeNil)
@@ -306,7 +276,10 @@ void RBTree::Increase(int key, int count)
         m_root = insertNode(m_root,toIncrease);
         m_root->parent = m_treeNil;
         insertFixup(m_root,toIncrease);
-
+        if(m_maxid < key)
+        	m_maxid = key;
+        if(m_minid > key)
+        	m_minid = key;
         std::cout<<count<<std::endl;
     }
     else{
@@ -316,6 +289,7 @@ void RBTree::Increase(int key, int count)
 
 }
 
+/*Fix the violations in an RBTree after deletion of a node*/
 void RBTree::deleteFixup(Treenode* &root,Treenode* &currnode)
 {
     while( currnode!= root &&  currnode->m_color == BLACK)
@@ -386,12 +360,22 @@ void RBTree::deleteFixup(Treenode* &root,Treenode* &currnode)
     currnode->m_color = BLACK; // at end set root as black
 }
 
-void RBTree::deleteNode(Treenode* &toDelete, Treenode* &root, int key)
+/*Delete a node from the RBTree*/
+void RBTree::deleteNode(Treenode* &toDelete, Treenode* &root)
 {
     if(toDelete == NULL)
     {
         return;
     }
+    if(toDelete->m_id == m_maxid){
+    	Treenode* maxnode = inorderPredecessor(toDelete);
+    	m_maxid = maxnode->m_id;
+    }
+    if(toDelete->m_id == m_minid){
+    	Treenode* minnode = inorderSuccessor(toDelete);
+        m_minid = minnode->m_id;
+     }
+
     Treenode* willbeDeleted = NULL;
     if(toDelete->left == m_treeNil || toDelete->right == m_treeNil)
         willbeDeleted = toDelete;
@@ -419,13 +403,13 @@ void RBTree::deleteNode(Treenode* &toDelete, Treenode* &root, int key)
     }
     delete willbeDeleted;
 }
-
+/*Search a node witha given key*/
 Treenode* RBTree::searchNode(int key)
 {
-	 if(m_root == NULL)
+	if(m_root == NULL)
 		 return NULL;
 
-	 Treenode* temp = m_root;
+	Treenode* temp = m_root;
 	while (temp != NULL)
 	{
 		//std::cout<<"Search Iteration "<<temp->m_id;
@@ -451,6 +435,11 @@ Treenode* RBTree::searchNode(int key)
     return temp;// Redundant
 }
 
+/*
+ * Search for a given ID in the tree. If the ID is present then the value of present is set to true
+ * and the pointer to that node is returned. If the ID is not present present is set to false and the
+ * pointer of the potential parent is returned.
+ */
 void RBTree::Reduce(int key, int count){
 
     Treenode* toDecrease = searchNode(key);
@@ -466,7 +455,7 @@ void RBTree::Reduce(int key, int count){
         return;
     }
     else{
-        deleteNode(toDecrease,m_root, key);
+        deleteNode(toDecrease,m_root);
         std::cout<<"0"<<std::endl;
     }
 
@@ -496,7 +485,7 @@ Treenode* RBTree::minimumNode(Treenode* node) {
   return current;
 }
 
-Treenode* RBTree::inorderSuccessor(Treenode* node)
+/*Treenode* RBTree::inorderSuccessor(Treenode* node)
 {
 	  if (node == NULL)
 	    return NULL;
@@ -527,11 +516,50 @@ Treenode* RBTree::inorderPredecessor(Treenode* node)
 		p = p->parent;
 	}
 	return p;
+}*/
+Treenode* RBTree::inorderSuccessor(Treenode* currnode)
+{
+    if(currnode->right != m_treeNil)
+    {
+        currnode = currnode->right;
+        while(currnode->left != m_treeNil)
+        {
+            currnode = currnode->left;
+        }
+        return currnode;
+    }
+    Treenode* p = currnode->parent;
+    while(p!=m_treeNil && currnode == p->right)
+    {
+        currnode = p;
+        p = currnode->parent;
+    }
+    return p;
+}
+
+Treenode* RBTree::inorderPredecessor(Treenode* currnode)
+{
+    if(currnode->left !=m_treeNil)
+    {
+        currnode = currnode->left;
+        while(currnode->right !=m_treeNil)
+        {
+            currnode = currnode->right;
+        }
+        return currnode;
+    }
+    Treenode* p_curr = currnode->parent;
+    while(p_curr!=m_treeNil && currnode != p_curr->right)
+    {
+        currnode = p_curr;
+        p_curr = currnode->parent;
+    }
+    return p_curr;
 }
 
 /*
  *
- */
+ *This
 /*
 void RBTree::inRange(int key1, int key2){
 	if(key2 < key1){
@@ -577,22 +605,88 @@ void RBTree::inRange(int key1, int key2){
 	std::cout<<keySum<<std::endl;
 }
 
+Treenode* RBTree::nextprevUtil(int key, Treenode* &prev, bool &isright){
+	 if(m_root == NULL)
+		 return NULL;
+
+	Treenode* temp = m_root;
+	while (temp != NULL)
+	{
+		//std::cout<<"Search Iteration "<<temp->m_id;
+		if (temp->m_id == key)
+		{
+			return temp;
+		}
+		else if(temp==m_treeNil)
+		{
+			return NULL;
+		}
+		else if (temp->m_id > key)
+		{
+			//std::cout<<" temp=temp->left"<<std::endl;
+			isright = false;
+			prev = temp;
+			temp = temp->left;
+		}
+		else
+		{
+			//std::cout<<" temp=temp->right"<<std::endl;
+			isright = true;
+			prev = temp;
+			temp = temp->right;
+		}
+	}
+   return temp;// Redundant
+}
+
 Treenode* RBTree::Next(int key){
-	Treenode* keynode=searchNode(key);
-	Treenode* next = inorderSuccessor(keynode);
-	if(next != NULL)
+	if(key >= m_maxid){
+		std::cout<<"0 0"<<std::endl;
+		return NULL;
+	}
+	Treenode* prev=NULL;
+	bool isright=false;
+	Treenode* keynode=nextprevUtil(key,prev,isright);
+	if(keynode != NULL){
+	//	std::cout<<" Node is found ."<<std::endl;
+		Treenode* next = inorderSuccessor(keynode);
+	//	std::cout<<"Next ."<<std::endl;
+
 		std::cout<<next->m_id<<" "<<next->m_count<<std::endl;
-	else
-		std::cout<<key<<" 0"<<std::endl;
+	}
+	else{
+		if(isright){
+			Treenode* next = inorderSuccessor(prev);
+			std::cout<<next->m_id<<" "<<next->m_count<<std::endl;
+		}
+		else{
+			std::cout<<prev->m_id<<" "<<prev->m_count<<std::endl;
+		}
+	}
 }
 
 Treenode* RBTree::Previous(int key){
-	Treenode* keynode=searchNode(key);
-	Treenode* previous = inorderPredecessor(keynode);
-	if(previous != NULL)
-		std::cout<<previous->m_id<<" "<<previous->m_count<<std::endl;
-	else
-		std::cout<<key<<" 0"<<std::endl;
+	if(key <= m_minid){
+		std::cout<<"0 0"<<std::endl;
+		return NULL;
+	}
+	Treenode* prev=NULL;
+	bool isright=false;
+	Treenode* keynode=nextprevUtil(key,prev,isright);
+	if(keynode != NULL){
+	//	std::cout<<" Node is found "<<std::endl;
+		Treenode* next = inorderPredecessor(keynode);
+		std::cout<<next->m_id<<" "<<next->m_count<<std::endl;
+	}
+	else{
+		if(!isright){
+			Treenode* next = inorderPredecessor(prev);
+			std::cout<<next->m_id<<" "<<next->m_count<<std::endl;
+		}
+		else{
+			std::cout<<prev->m_id<<" "<<prev->m_count<<std::endl;
+		}
+	}
 }
 
 

@@ -61,14 +61,13 @@ int main(int argc, char* argv[]){
 	eventCounter.Previous(0);
 	eventCounter.Reduce(271,6);
 	eventCounter.Previous(350);
-
 	eventCounter.Reduce(271,3);
 	eventCounter.Previous(350);
 	eventCounter.Previous(150);
 
 
 	while(1){
-		break;
+		//break;
 		cout<<"Enter your command"<<endl;
 		cin>>command;
 		if(command=="increase"){
