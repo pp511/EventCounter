@@ -15,34 +15,26 @@ public://There are not getter,setter functions being used for this class. Better
 
 class RBTree{
 private:
-	Treenode* m_root;
+	Treenode* m_root, *m_treeNil;
 	void colorTree(Treenode* node, int level, int maxHeight);
 	Treenode* sortedVectorToBST(std::vector<Treenode*> &input, int start, int end);
 	void inOrderUtil(Treenode* root);
 	void deleteTree(Treenode* root);
 	void replaceNode(Treenode* oldNode, Treenode* newNode);
-	void rotateLeft(Treenode* node);
-	void rotateRight(Treenode* node);
-    void insert_case1(Treenode* node);
-    void insert_case2(Treenode* node);
-    void insert_case3(Treenode* node);
-    void insert_case4(Treenode* node);
-    void insert_case5(Treenode* node);
+	void rotateLeft(Treenode* &root, Treenode* &currnode);
+	void rotateRight(Treenode* &root, Treenode* &currnode);
     Treenode* grandparent(Treenode* node);
-    Treenode* sibling(Treenode* node);
     Treenode* uncle(Treenode* node);
     Treenode* searchNode(int key);
     Treenode* maximumNode(Treenode* node);
-    void delete_case1(Treenode* node);
-    void delete_case2(Treenode* node);
-    void delete_case3(Treenode* node);
-    void delete_case4(Treenode* node);
-    void delete_case5(Treenode* node);
-    void delete_case6(Treenode* node);
+    void insertFixup(Treenode* &root, Treenode* &currnode);
+    Treenode* insertNode(Treenode* root, Treenode* currnode);
+    void deleteNode(Treenode* &toDelete, Treenode* &root, int key);
+    void deleteFixup(Treenode* &root,Treenode* &currnode);
     Treenode* minimumNode(Treenode* node);
     Treenode* inorderSuccessor(Treenode* node);
     Treenode* inorderPredecessor(Treenode* node);
-    void inRangeUtil(Treenode* temp,int key1, int key2);
+    void inRangeUtil(Treenode* temp,int key1, int key2,int &keySum);
 
 public:
 	RBTree();
