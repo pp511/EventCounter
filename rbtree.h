@@ -20,7 +20,6 @@ private:
 	Treenode* sortedVectorToBST(std::vector<Treenode*> &input, int start, int end);
 	void inOrderUtil(Treenode* root);
 	void deleteTree(Treenode* root);
-	void replaceNode(Treenode* oldNode, Treenode* newNode);
 	void rotateLeft(Treenode* &root, Treenode* &currnode);
 	void rotateRight(Treenode* &root, Treenode* &currnode);
     Treenode* grandparent(Treenode* node);
@@ -29,7 +28,7 @@ private:
     Treenode* maximumNode(Treenode* node);
     void insertFixup(Treenode* &root, Treenode* &currnode);
     Treenode* insertNode(Treenode* root, Treenode* currnode);
-    void deleteNode(Treenode* &toDelete, Treenode* &root);
+    void deleteNode( Treenode* &root, Treenode* &toDelete);
     void deleteFixup(Treenode* &root,Treenode* &currnode);
     Treenode* minimumNode(Treenode* node);
     Treenode* inorderSuccessor(Treenode* node);

@@ -68,7 +68,7 @@ int main(int argc, char* argv[]){
 
 	while(1){
 		//break;
-		cout<<"Enter your command"<<endl;
+		//cout<<"Enter your command"<<endl;
 		cin>>command;
 		if(command=="increase"){
 			cin>>param1;

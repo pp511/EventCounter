@@ -78,6 +78,8 @@ void RBTree::buildTree(std::vector<Treenode*> &nodes){
 	//std::cout<<"NumNodes ="<<numNodes<<std::endl;
 
 	colorTree(m_root,0,maxHeight);//  Color leaf nodes as red
+	m_root->m_color = BLACK;
+
 	//std::cout<<"Max Height ="<<maxHeight<<" Tree Building is Finished"<<std::endl;
 	//Initialising the min max variables of the tree
 	m_maxid =nodes[nodes.size()-1]->m_id;
@@ -94,7 +96,7 @@ RBTree::RBTree(){
     m_maxid = m_minid =0;
 }
 
-/* Delete teh complete tree. Except the Nil node*/
+/* Delete the complete tree. Except the Nil node*/
 void RBTree::deleteTree(Treenode *node){
     if(node != m_treeNil) {
     	deleteTree(node->left);
@@ -112,64 +114,82 @@ RBTree::~RBTree(){
 /* Return grandparent of a given node.*/
 Treenode* RBTree::grandparent(Treenode *node)
 {
-	 if ((node != NULL) && (node->parent != NULL))
+	 if ((node != NULL) && (node->parent != NULL)){
 	  return node->parent->parent;
-	 else
+	 }
+	 else{
 	  return NULL;
+	 }
 }
 
 /*Return Uncle of aa given node*/
 Treenode* RBTree::uncle(Treenode *node)
 {
 	Treenode *g = grandparent(node);
-	if (g == NULL)
+	if (g == NULL){
 		return NULL; // No uncle
-	if (node->parent == g->left)
+	}
+	if (node->parent == g->left){
 		return g->right;
-	else
+	}
+	else{
 		return g->left;
+	}
 }
 
-/*Rotate right*/
+/*Rotate right. Logic Taken from CLRS*/
 void RBTree::rotateRight(Treenode* &root, Treenode* &currnode)
 {
     Treenode* leftNode = currnode->left;
+
     currnode->left = leftNode->right;
 
-    if(currnode->left != m_treeNil)
+    if(currnode->left != m_treeNil){
     	currnode->left->parent = currnode;
+    }
 
     leftNode->parent = currnode->parent;
 
-    if(currnode->parent == m_treeNil)
+    if(currnode->parent == m_treeNil){
         root = leftNode;
-    else if(currnode->parent->left == currnode)
+    }
+    else if(currnode->parent->left == currnode){
     	currnode->parent->left = leftNode;
-    else
+    }
+    else{
     	currnode->parent->right = leftNode;
+    }
 
     leftNode->right = currnode;
+
     currnode->parent = leftNode;
 }
 
-/*Rotate left*/
+/*Rotate left. Logic Taken from CLRS*/
 void RBTree::rotateLeft(Treenode* &root, Treenode* &currnode)
 {
     Treenode* rightNode = currnode->right;
+
     currnode->right = rightNode->left;
 
-    if(currnode->right != m_treeNil)
+    if(currnode->right != m_treeNil){
     	currnode->right->parent = currnode;
+    }
 
     rightNode->parent = currnode->parent;
 
-    if(currnode->parent == m_treeNil)
+    if(currnode->parent == m_treeNil){
         root = rightNode;
-    else if(currnode->parent->left == currnode)
+    }
+    else if(currnode->parent->left == currnode){
     	currnode->parent->left = rightNode;
-    else
+    }
+    else{
     	currnode->parent->right = rightNode;
+    }
+
    rightNode->left = currnode;
+
    currnode->parent = rightNode;
 }
 
@@ -187,16 +207,20 @@ Treenode* RBTree::maximumNode(Treenode* node)
     return node;
 }
 
-/*Fix the violations in an RBTree after insertion of a node*/
+/*Fix the violations in an RBTree after insertion of a node. Login has been
+ * taken from CLRS.
+ */
 void RBTree::insertFixup(Treenode* &root, Treenode* &currnode)
 {
     while(currnode != root && currnode->parent->m_color == RED) {
         Treenode* p = currnode->parent;
         Treenode* g = grandparent(currnode);
         Treenode* u = uncle(currnode);
-        if(g->left == p) // parent is left child
+        // When Parent is left child
+        if(g->left == p)
         {
-            if(u->m_color == RED)//case 1: CLRS
+        	//case 1: CLRS
+            if(u->m_color == RED)
             {
                 g->m_color = RED;
                 u->m_color = BLACK;
@@ -205,7 +229,8 @@ void RBTree::insertFixup(Treenode* &root, Treenode* &currnode)
             }
             else
             {
-                if(currnode == p->right) // case 2 :CLRS
+            	// case 2 :CLRS
+                if(currnode == p->right)
                 {
                     rotateLeft(root,p);
                     currnode = p;
@@ -226,7 +251,8 @@ void RBTree::insertFixup(Treenode* &root, Treenode* &currnode)
             }
             else
             {
-                if(currnode == p->left) // case 3 : CLRS
+            	 //case 3 : CLRS
+                if(currnode == p->left)
                 {
                     rotateRight(root,p);
                     currnode = p;
@@ -242,11 +268,12 @@ void RBTree::insertFixup(Treenode* &root, Treenode* &currnode)
     m_root = root;
 }
 
-/*Insert the node in a BBST.*/
+/*Insert the node in a BBST */
 Treenode* RBTree::insertNode(Treenode* root, Treenode* currnode)
 {
-    if(root == NULL || root == m_treeNil)
+    if(root == NULL || root == m_treeNil){
         	return currnode;
+    }
 
     if(root->m_id < currnode->m_id){
 	   root->right = insertNode(root->right, currnode);
@@ -276,6 +303,7 @@ void RBTree::Increase(int key, int count)
         m_root = insertNode(m_root,toIncrease);
         m_root->parent = m_treeNil;
         insertFixup(m_root,toIncrease);
+        //Change min/max id if this node falls out of the range.
         if(m_maxid < key)
         	m_maxid = key;
         if(m_minid > key)
@@ -299,27 +327,31 @@ void RBTree::deleteFixup(Treenode* &root,Treenode* &currnode)
         if(currnode = p->left)
         {
             s = p->right;
-            if(s->m_color == RED) // case 1
+            // case 1: CLRS
+            if(s->m_color == RED)
             {
                 s->m_color = BLACK;
                 p->m_color = RED;
                 rotateLeft(root,p);
                 s = p->right;
             }
-            if(s->left->m_color == BLACK && s->right->m_color == BLACK)//case 2
+            //case 2: CLRS
+            if(s->left->m_color == BLACK && s->right->m_color == BLACK)
             {
                 s->m_color = RED;
                 currnode = p;
             }
             else
             {
-                if(s->right->m_color == BLACK)//case 3
-                s->left->m_color = BLACK;
+            	//case 3: CLRS
+                if(s->right->m_color == BLACK){
+                	 s->left->m_color = BLACK;
+                }
                 s->m_color = RED;
                 rotateRight(root,s);
                 s = p->right;
-
-            s->m_color = p->m_color;//case 4
+            //case 4: CLRS
+            s->m_color = p->m_color;
             p->m_color = BLACK;
             s->right->m_color = BLACK;
             rotateLeft(root,p);
@@ -343,8 +375,9 @@ void RBTree::deleteFixup(Treenode* &root,Treenode* &currnode)
             }
             else
             {
-                if(s->left->m_color == BLACK)
-                s->right->m_color = BLACK;
+                if(s->left->m_color == BLACK){
+                	s->right->m_color = BLACK;
+                }
                 s->m_color = RED;
                 rotateLeft(root,s);
                 s = p->left;
@@ -357,7 +390,7 @@ void RBTree::deleteFixup(Treenode* &root,Treenode* &currnode)
             }
         }
     }
-    currnode->m_color = BLACK; // at end set root as black
+    currnode->m_color = BLACK; // At end make sure to set root as black.
 }
 
 /*Delete a node from the RBTree*/
@@ -367,6 +400,7 @@ void RBTree::deleteNode(Treenode* &toDelete, Treenode* &root)
     {
         return;
     }
+
     if(toDelete->m_id == m_maxid){
     	Treenode* maxnode = inorderPredecessor(toDelete);
     	m_maxid = maxnode->m_id;
@@ -377,27 +411,42 @@ void RBTree::deleteNode(Treenode* &toDelete, Treenode* &root)
      }
 
     Treenode* willbeDeleted = NULL;
-    if(toDelete->left == m_treeNil || toDelete->right == m_treeNil)
+    //If the tree is a leaf node then delete it.
+    if(toDelete->left == m_treeNil || toDelete->right == m_treeNil){
         willbeDeleted = toDelete;
-    else
+    }
+    else{//Find the inorder soccessor. Swap the contents of the two and delete the successor.
         willbeDeleted = inorderSuccessor(toDelete);
-    Treenode* child = willbeDeleted->left == m_treeNil?willbeDeleted->right : willbeDeleted->left;
+    }
+
+    Treenode* child;
+
+    if(willbeDeleted->left == m_treeNil){
+    	child = willbeDeleted->left;
+    }
+    else{
+    	willbeDeleted->left;
+    }
+
     child->parent = willbeDeleted->parent;
-    if(willbeDeleted->parent == m_treeNil) // node to be deleted is root
+    if(willbeDeleted->parent == m_treeNil){ // If the node to be deleted is root
         root = child;
-    //attach child at appropriate postion
-    if(willbeDeleted->parent->left == willbeDeleted)
+    }
+
+    if(willbeDeleted->parent->left == willbeDeleted){   //Attach the child at appropriate position
+
         willbeDeleted->parent->left = child;
-    else
+    }
+    else{
         willbeDeleted->parent->right = child;
+    }
    //cout<<"before fixup"<<std::endl;
-    if(toDelete != willbeDeleted)
-    {
+    if(toDelete != willbeDeleted){
         toDelete->m_id = willbeDeleted->m_id;
         toDelete->m_color = willbeDeleted->m_color;
     }
-    if(willbeDeleted->m_color == BLACK) // call fixup only when deleted node is black as it will violate black node count invarient
-    {
+
+    if(willbeDeleted->m_color == BLACK){// call fixup only when deleted node is black as it will violate black node count invarient
         //cout<<"deleteFixup call"<<std::endl;
         deleteFixup(root,child);
     }
