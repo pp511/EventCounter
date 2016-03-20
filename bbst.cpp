@@ -32,7 +32,7 @@ int main(int argc, char* argv[]){
 //	std::cout<<" TREE HAS BEEN BUILT. ENTERING USER INTERACTION MODE"<<std::endl;
 	string command="";
 	int param1=0,param2=0;
-	cout<<"Choose the command "<<endl;
+/*	cout<<"Choose the command "<<endl;
 	cout<<"-------------------"<<endl;
 	cout<<"increase <id> <m>"<<endl;
 	cout<<"reduce  <id> <m>"<<endl;
@@ -63,7 +63,7 @@ int main(int argc, char* argv[]){
 	eventCounter.Previous(350);
 	eventCounter.Reduce(271,3);
 	eventCounter.Previous(350);
-	eventCounter.Previous(150);
+	eventCounter.Previous(150);*/
 
 
 	while(1){
