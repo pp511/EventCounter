@@ -29,7 +29,7 @@ private:
     Treenode* maximumNode(Treenode* node);
     void insertFixup(Treenode* &root, Treenode* &currnode);
     Treenode* insertNode(Treenode* root, Treenode* currnode);
-    void deleteNode(Treenode* &root, Treenode* &toDelete);
+    void deleteNode(Treenode* &toDelete, Treenode* &root);
     void deleteFixup(Treenode* &root,Treenode* &currnode);
     Treenode* minimumNode(Treenode* node);
     Treenode* inorderSuccessor(Treenode* node);

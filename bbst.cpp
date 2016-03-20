@@ -44,7 +44,7 @@ int main(int argc, char* argv[]){
 	cout<<"quit : Halt the current execution"<<endl;
 	cout<<"-------------------"<<endl;
 
-	/*eventCounter.Increase(350,100);
+	eventCounter.Increase(350,100);
 	eventCounter.Reduce(350,50);
 	eventCounter.Count(350);
 	eventCounter.inRange(300,1000);
@@ -63,7 +63,7 @@ int main(int argc, char* argv[]){
 	eventCounter.Previous(350);
 	eventCounter.Reduce(271,3);
 	eventCounter.Previous(350);
-	eventCounter.Previous(150);*/
+	eventCounter.Previous(150);
 
 
 	while(1){
