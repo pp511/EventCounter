@@ -81,7 +81,6 @@ int main(int argc, char* argv[]){
 				eventCounter.Reduce(param1,param2);
 		}
 		if(command=="count"){
-			   cout<<command<<" command is executing"<<endl;
 				cin>>param1;
 				eventCounter.Count(param1);
 		}

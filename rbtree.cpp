@@ -68,7 +68,7 @@ void RBTree::colorTree(Treenode* root, int level, int maxHeight)
    	colorTree(root->left,level+1,maxHeight);
     colorTree(root->right,level+1,maxHeight);
 }
-/* RBTree Constructor */
+/* RBTree Constructor calls this*/
 void RBTree::buildTree(std::vector<Treenode*> &nodes){
 	m_root = sortedVectorToBST(nodes,0,nodes.size()-1);// Construct the BBST from the sorted input.
 	m_root->parent = m_treeNil;
@@ -452,6 +452,7 @@ void RBTree::deleteNode(Treenode* &toDelete, Treenode* &root)
     }
     delete willbeDeleted;
 }
+
 /*Search a node witha given key*/
 Treenode* RBTree::searchNode(int key)
 {

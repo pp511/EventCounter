@@ -3,8 +3,8 @@
 
 typedef enum {BLACK, RED} nodeColor;
 
-class Treenode{
-public://There are not getter,setter functions being used for this class. Better idea to use struct instead.
+struct Treenode{
+//public:
 	int m_id,m_count;
 	nodeColor m_color;
 	Treenode *left,*right,*parent;
